@@ -49,7 +49,7 @@ public class CLI {
 				BooleanQueryResultWriter createWriter = QueryResultIO
 						.createWriter(BooleanQueryResultFormat.TEXT, System.out);
 				boolean evaluate = ((BooleanQuery) pTQ).evaluate();
-				createWriter.write(evaluate);
+				createWriter.handleBoolean(evaluate);
 			}
 		} finally {
 			System.out.println("done");
