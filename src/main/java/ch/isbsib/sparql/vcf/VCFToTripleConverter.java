@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.broad.tribble.annotation.Strand;
-import org.broad.tribble.bed.BEDFeature;
-import org.broad.tribble.bed.FullBEDFeature.Exon;
 import org.broadinstitute.variant.variantcontext.Allele;
 import org.broadinstitute.variant.variantcontext.VariantContext;
 import org.openrdf.model.IRI;

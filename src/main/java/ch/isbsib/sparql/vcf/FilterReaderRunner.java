@@ -8,7 +8,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.broad.tribble.AbstractFeatureReader;
-import org.broad.tribble.Feature;
 import org.broad.tribble.readers.LineIterator;
 import org.broadinstitute.variant.variantcontext.VariantContext;
 import org.broadinstitute.variant.vcf.VCFCodec;
