@@ -134,12 +134,6 @@ public class VCFToTripleConverter {
 
 	}
 
-	private void add(List<Statement> statements, IRI subject, IRI predicate,
-			float string) {
-		add(statements, subject, predicate, vf.createLiteral(string));
-
-	}
-
 	private void add(List<Statement> statements, Resource subject,
 			IRI predicate, Value object) {
 		statements.add(vf.createStatement(subject, predicate, object));
