@@ -19,14 +19,17 @@ public class VCFFileStoreFactory implements SailFactory {
 	/**
 	 * Returns the Sail's type: <tt>openrdf:MemoryStore</tt>.
 	 */
+	@Override
 	public String getSailType() {
 		return SAIL_TYPE;
 	}
 
+	@Override
 	public SailImplConfig getConfig() {
 		return new VCFFileConfig();
 	}
 
+	@Override
 	public Sail getSail(SailImplConfig config)
 		throws SailConfigException
 	{
