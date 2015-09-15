@@ -36,8 +36,6 @@ public class CLI {
 			RDFHandlerException, IOException, TupleQueryResultHandlerException {
 		VCFFileStore rep = new VCFFileStore();
 		File dataDir = mkTempDir();
-		System.err.println(args[0]);
-		System.err.println(args[1]);
 		CommandLineParser parser = new DefaultParser();
 		try {
 			// parse the command line arguments
