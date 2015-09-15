@@ -11,4 +11,6 @@ java -jar target/sparql-vcf-1.0-SNAPSHOT-jar-with-dependencies.jar -v src/test/r
 ```
 
 See the issue lists for future tasks..
-The only requirements are a maven3 and java8+ installation.
+The only requirements are a maven2 and java8+ installation.
+
+(maven 3+ does not work at this moment)
