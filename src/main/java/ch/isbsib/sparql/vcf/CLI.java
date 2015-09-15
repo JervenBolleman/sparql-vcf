@@ -72,11 +72,11 @@ public class CLI {
 						System.out);
 				((TupleQuery) pTQ).evaluate(handler);
 			} else if (pTQ instanceof GraphQuery) {
-				System.err.println("GRAPH query");
+				System.err.println("CONSTRUCT/DESCRIBE query");
 				RDFHandler createWriter = new TurtleWriter(System.out);
 				((GraphQuery) pTQ).evaluate(createWriter);
 			} else if (pTQ instanceof BooleanQuery) {
-				System.err.println("Boolean query");
+				System.err.println("ASK query");
 				BooleanQueryResultWriter createWriter = QueryResultIO
 						.createWriter(BooleanQueryResultFormat.TEXT, System.out);
 				boolean evaluate = ((BooleanQuery) pTQ).evaluate();
@@ -88,10 +88,16 @@ public class CLI {
 			}
 		} catch (MalformedQueryException qe) {
 			System.err.println("Query is wrong:" + qe.getMessage());
+			System.exit(1);
 		} catch (RepositoryException re) {
 			System.err.println("Repository is wrong:" + re.getMessage());
+			System.exit(1);
 		} catch (QueryEvaluationException re) {
 			System.err.println("Query evaluation errored:" + re.getMessage());
+			System.exit(1);
+		} catch (Exception re) {
+			System.err.println("Annother exception errored:" + re.getMessage());
+			System.exit(1);
 		} finally {
 			System.err.println("done");
 			deleteDir(dataDir);
