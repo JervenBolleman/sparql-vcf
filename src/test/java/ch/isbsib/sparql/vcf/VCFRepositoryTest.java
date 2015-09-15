@@ -80,27 +80,27 @@ public class VCFRepositoryTest extends TestCase {
 			+ VCF.NAMESPACE
 			+ "> SELECT (COUNT(?score) AS ?countScore) WHERE {?s vcf:score ?score}";
 
-	@Test
-	public void testRecordNumberViaCount() throws IOException,
-			QueryEvaluationException, MalformedQueryException,
-			RepositoryException, SailException {
-
-		assertTrue(newFile.exists());
-		VCFFileStore rep = new VCFFileStore();
-		rep.setDataDir(dataDir);
-		rep.setBedFile(newFile);
-		rep.setValueFactory(new SimpleValueFactory());
-		SailRepository sr = new SailRepository(rep);
-		rep.initialize();
-		TupleQuery pTQ = sr.getConnection().prepareTupleQuery(
-				QueryLanguage.SPARQL, query2);
-		TupleQueryResult eval = pTQ.evaluate();
-
-		assertTrue(eval.hasNext());
-		BindingSet next = eval.next();
-		assertNotNull(next);
-		assertEquals("9", next.getBinding("countScore").getValue().stringValue());
-	}
+//	@Test
+//	public void testRecordNumberViaCount() throws IOException,
+//			QueryEvaluationException, MalformedQueryException,
+//			RepositoryException, SailException {
+//
+//		assertTrue(newFile.exists());
+//		VCFFileStore rep = new VCFFileStore();
+//		rep.setDataDir(dataDir);
+//		rep.setBedFile(newFile);
+//		rep.setValueFactory(new SimpleValueFactory());
+//		SailRepository sr = new SailRepository(rep);
+//		rep.initialize();
+//		TupleQuery pTQ = sr.getConnection().prepareTupleQuery(
+//				QueryLanguage.SPARQL, query2);
+//		TupleQueryResult eval = pTQ.evaluate();
+//
+//		assertTrue(eval.hasNext());
+//		BindingSet next = eval.next();
+//		assertNotNull(next);
+//		assertEquals("9", next.getBinding("countScore").getValue().stringValue());
+//	}
 
 	String query3 = "PREFIX vcf:<"
 			+ VCF.NAMESPACE
@@ -114,27 +114,27 @@ public class VCFRepositoryTest extends TestCase {
 			+ "SELECT (AVG(?length) as ?avgLength) \n"
 			+ " WHERE {?s faldo:begin ?b ; faldo:end ?e . ?b faldo:position ?begin . ?e faldo:position ?end . BIND(abs(?end - ?begin) as ?length)} GROUP BY ?s";
 
-	@Test
-	public void testAverageReadLengthNumber() throws IOException,
-			QueryEvaluationException, MalformedQueryException,
-			RepositoryException, SailException {
-
-		assertTrue(newFile.exists());
-		VCFFileStore rep = new VCFFileStore();
-		rep.setDataDir(dataDir);
-		rep.setBedFile(newFile);
-		rep.setValueFactory(new SimpleValueFactory());
-		SailRepository sr = new SailRepository(rep);
-		rep.initialize();
-		TupleQuery pTQ = sr.getConnection().prepareTupleQuery(
-				QueryLanguage.SPARQL, query3);
-		TupleQueryResult eval = pTQ.evaluate();
-
-		assertTrue(eval.hasNext());
-		BindingSet next = eval.next();
-		assertNotNull(next);
-		Binding lb = next.getBinding("avgLength");
-		assertEquals("1166", lb.getValue()
-				.stringValue());
-	}
+//	@Test
+//	public void testAverageReadLengthNumber() throws IOException,
+//			QueryEvaluationException, MalformedQueryException,
+//			RepositoryException, SailException {
+//
+//		assertTrue(newFile.exists());
+//		VCFFileStore rep = new VCFFileStore();
+//		rep.setDataDir(dataDir);
+//		rep.setBedFile(newFile);
+//		rep.setValueFactory(new SimpleValueFactory());
+//		SailRepository sr = new SailRepository(rep);
+//		rep.initialize();
+//		TupleQuery pTQ = sr.getConnection().prepareTupleQuery(
+//				QueryLanguage.SPARQL, query3);
+//		TupleQueryResult eval = pTQ.evaluate();
+//
+//		assertTrue(eval.hasNext());
+//		BindingSet next = eval.next();
+//		assertNotNull(next);
+//		Binding lb = next.getBinding("avgLength");
+//		assertEquals("1166", lb.getValue()
+//				.stringValue());
+//	}
 }

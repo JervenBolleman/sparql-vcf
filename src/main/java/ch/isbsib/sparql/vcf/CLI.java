@@ -3,6 +3,13 @@ package ch.isbsib.sparql.vcf;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.openrdf.model.impl.SimpleValueFactory;
 import org.openrdf.query.BooleanQuery;
 import org.openrdf.query.GraphQuery;
@@ -28,46 +35,82 @@ public class CLI {
 			RepositoryException, QueryEvaluationException, SailException,
 			RDFHandlerException, IOException, TupleQueryResultHandlerException {
 		VCFFileStore rep = new VCFFileStore();
-		File dataDir = mkTempDir();	
-		System.out.println("Query is" + args[1]);
-		try {
-			rep.setDataDir(dataDir);
-			rep.setBedFile(new File(args[0]));
-			rep.setValueFactory(new SimpleValueFactory());
-			SailRepository sr = new SailRepository(rep);
-			rep.initialize();
-			Query pTQ = sr.getConnection().prepareTupleQuery(
-					QueryLanguage.SPARQL, args[1]);
-			if (pTQ instanceof TupleQuery) {
+		File dataDir = mkTempDir();
 
-				SPARQLResultsCSVWriter handler = new SPARQLResultsCSVWriter(System.out);
-				((TupleQuery) pTQ).evaluate(handler);
-			} else if (pTQ instanceof GraphQuery) {
-				RDFHandler createWriter = new TurtleWriter(System.out);
-				((GraphQuery) pTQ).evaluate(createWriter);
-			} else if (pTQ instanceof BooleanQuery) {
-				BooleanQueryResultWriter createWriter = QueryResultIO
-						.createWriter(BooleanQueryResultFormat.TEXT, System.out);
-				boolean evaluate = ((BooleanQuery) pTQ).evaluate();
-				createWriter.handleBoolean(evaluate);
+		CommandLineParser parser = new DefaultParser();
+		try {
+			// parse the command line arguments
+			CommandLine line = parser.parse(setUpCLIParsing(), args);
+			String query = line.getOptionValue("q");
+			String vcf = line.getOptionValue("v");
+			System.out.println("Query is" + query);
+			try {
+				rep.setDataDir(dataDir);
+				rep.setBedFile(new File(vcf));
+				rep.setValueFactory(new SimpleValueFactory());
+				SailRepository sr = new SailRepository(rep);
+				rep.initialize();
+				Query pTQ = sr.getConnection().prepareTupleQuery(
+						QueryLanguage.SPARQL, query);
+				if (pTQ instanceof TupleQuery) {
+
+					SPARQLResultsCSVWriter handler = new SPARQLResultsCSVWriter(
+							System.out);
+					((TupleQuery) pTQ).evaluate(handler);
+				} else if (pTQ instanceof GraphQuery) {
+					RDFHandler createWriter = new TurtleWriter(System.out);
+					((GraphQuery) pTQ).evaluate(createWriter);
+				} else if (pTQ instanceof BooleanQuery) {
+					BooleanQueryResultWriter createWriter = QueryResultIO
+							.createWriter(BooleanQueryResultFormat.TEXT, System.out);
+					boolean evaluate = ((BooleanQuery) pTQ).evaluate();
+					createWriter.handleBoolean(evaluate);
+				}
+			} finally {
+				System.out.println("done");
+				deleteDir(dataDir);
+				System.exit(0);
 			}
-		} finally {
-			System.out.println("done");
-			deleteDir(dataDir);
-			System.exit(0);
+		} catch (ParseException exp) {
+			// oops, something went wrong
+			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
+			System.exit(1);
 		}
+
+		
+	}
+
+	private static Options setUpCLIParsing() {
+		Options options = new Options();
+		final Option queryOption = Option.builder("q").hasArg()
+				.desc("SPARQL query").longOpt("query").build();
+
+		final Option vcfOption = Option.builder("v").hasArg()
+				.desc("VCF file").longOpt("vcf").build();
+
+		final Option portOption = Option.builder("p").hasArg()
+				.desc("http port").longOpt("port").build();
+
+		final OptionGroup server = new OptionGroup();
+		final OptionGroup cli = new OptionGroup();
+		server.addOption(vcfOption);
+		cli.addOption(vcfOption);
+		server.addOption(portOption);
+		cli.addOption(queryOption);
+		options.addOptionGroup(server);
+		options.addOptionGroup(cli);
+		return options;
 	}
 
 	protected static void deleteDir(File dataDir) {
 		for (File file : dataDir.listFiles()) {
-			if (file.isFile()){
+			if (file.isFile()) {
 				if (!file.delete())
 					file.deleteOnExit();
-			}
-			else if (file.isDirectory())
+			} else if (file.isDirectory())
 				deleteDir(file);
 		}
-		if (!dataDir.delete()){
+		if (!dataDir.delete()) {
 			dataDir.deleteOnExit();
 		}
 	}
