@@ -110,10 +110,10 @@ public class CLI {
 
 		final OptionGroup serverOrCli = new OptionGroup();
 		// final OptionGroup cli = new OptionGroup();
-		serverOrCli.addOption(vcfOption);
+		serverOrCli.addOption(portOption);
 		serverOrCli.addOption(queryOption);
 		options.addOptionGroup(serverOrCli);
-		options.addOption(portOption);
+		options.addOption(vcfOption);
 		return options;
 	}
 
