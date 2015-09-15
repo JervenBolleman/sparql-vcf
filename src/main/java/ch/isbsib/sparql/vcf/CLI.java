@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
@@ -30,6 +31,8 @@ import org.openrdf.rio.RDFHandlerException;
 import org.openrdf.rio.turtle.TurtleWriter;
 import org.openrdf.sail.SailException;
 
+import ch.isbsib.sparql.http.SPARQLServer;
+
 public class CLI {
 	public static void main(String[] args) throws MalformedQueryException,
 			RepositoryException, QueryEvaluationException, SailException,
@@ -39,18 +42,29 @@ public class CLI {
 		CommandLineParser parser = new DefaultParser();
 		try {
 			// parse the command line arguments
-			CommandLine line = parser.parse(setUpCLIParsing(), args);
+			final Options options = setUpCLIParsing();
+			CommandLine line = parser.parse(options, args);
 
 			String query = (String) line.getParsedOptionValue("q");
 			String vcf = (String) line.getParsedOptionValue("v");
+			String port = (String) line.getParsedOptionValue("p");
 			System.err.println("VCF is: " + vcf);
 			if (line.hasOption("q")) {
 				runSingleQueryOnCommandLine(rep, dataDir, query, vcf);
+			} else if (line.hasOption("p")) {
+				SPARQLServer sparqlServer = new SPARQLServer(dataDir, vcf, port);
+				sparqlServer.run();
+			} else {
+				new HelpFormatter().printHelp("sparql-vcf", "", options, "",
+						true);
 			}
 		} catch (ParseException exp) {
 			// oops, something went wrong
 			System.err.println("Parsing failed.  Reason: " + exp.getMessage());
 			System.exit(1);
+		} catch (Exception e) {
+			System.err.println("Server failed: " + e.getMessage());
+			System.exit(2);
 		}
 
 	}
