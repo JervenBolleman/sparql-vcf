@@ -62,7 +62,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>ch.isbsib.sparql.bed.CLI</mainClass>
+							<mainClass>ch.isbsib.sparql.vcf.CLI</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
