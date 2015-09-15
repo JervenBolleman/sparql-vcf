@@ -1,4 +1,4 @@
-sparql-bed
+sparql-vcf
 ==========
 
 sparql against simple vcf files without loading them into a triple store.
