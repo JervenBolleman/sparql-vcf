@@ -45,43 +45,9 @@ public class CLI {
 
 			String query = (String) line.getParsedOptionValue("q");
 			String vcf = (String) line.getParsedOptionValue("v");
-			System.out.println("VCF is: " + vcf);
-			System.out.println("Query is: " + query);
-			try {
-				rep.setDataDir(dataDir);
-				rep.setBedFile(new File(vcf));
-				rep.setValueFactory(new SimpleValueFactory());
-				SailRepository sr = new SailRepository(rep);
-				rep.initialize();
-				Query pTQ = sr.getConnection().prepareQuery(
-						QueryLanguage.SPARQL, query);
-				if (pTQ instanceof TupleQuery) {
-					System.err.println("SELECT query");
-					SPARQLResultsCSVWriter handler = new SPARQLResultsCSVWriter(
-							System.out);
-					((TupleQuery) pTQ).evaluate(handler);
-				} else if (pTQ instanceof GraphQuery) {
-					System.err.println("GRAPH query");
-					RDFHandler createWriter = new TurtleWriter(System.out);
-					((GraphQuery) pTQ).evaluate(createWriter);
-				} else if (pTQ instanceof BooleanQuery) {
-					System.err.println("Boolean query");
-					BooleanQueryResultWriter createWriter = QueryResultIO
-							.createWriter(BooleanQueryResultFormat.TEXT,
-									System.out);
-					boolean evaluate = ((BooleanQuery) pTQ).evaluate();
-					createWriter.startDocument();
-					createWriter.startHeader();
-					createWriter.endHeader();
-					createWriter.handleBoolean(evaluate);
-					createWriter.endQueryResult();
-				}
-			} catch (MalformedQueryException qe) {
-				System.out.println("Query is wrong:" + qe.getMessage());
-			} finally {
-				System.out.println("done");
-				deleteDir(dataDir);
-				System.exit(0);
+			System.err.println("VCF is: " + vcf);
+			if (line.hasOption("q")) {
+				runSingleQueryOnCommandLine(rep, dataDir, query, vcf);
 			}
 		} catch (ParseException exp) {
 			// oops, something went wrong
@@ -89,6 +55,46 @@ public class CLI {
 			System.exit(1);
 		}
 
+	}
+
+	private static void runSingleQueryOnCommandLine(VCFFileStore rep,
+			File dataDir, String query, String vcf) {
+		System.err.println("Query is: " + query);
+		try {
+			rep.setDataDir(dataDir);
+			rep.setBedFile(new File(vcf));
+			rep.setValueFactory(new SimpleValueFactory());
+			SailRepository sr = new SailRepository(rep);
+			rep.initialize();
+			Query pTQ = sr.getConnection().prepareQuery(QueryLanguage.SPARQL,
+					query);
+			if (pTQ instanceof TupleQuery) {
+				System.err.println("SELECT query");
+				SPARQLResultsCSVWriter handler = new SPARQLResultsCSVWriter(
+						System.out);
+				((TupleQuery) pTQ).evaluate(handler);
+			} else if (pTQ instanceof GraphQuery) {
+				System.err.println("GRAPH query");
+				RDFHandler createWriter = new TurtleWriter(System.out);
+				((GraphQuery) pTQ).evaluate(createWriter);
+			} else if (pTQ instanceof BooleanQuery) {
+				System.err.println("Boolean query");
+				BooleanQueryResultWriter createWriter = QueryResultIO
+						.createWriter(BooleanQueryResultFormat.TEXT, System.out);
+				boolean evaluate = ((BooleanQuery) pTQ).evaluate();
+				createWriter.startDocument();
+				createWriter.startHeader();
+				createWriter.endHeader();
+				createWriter.handleBoolean(evaluate);
+				createWriter.endQueryResult();
+			}
+		} catch (MalformedQueryException qe) {
+			System.err.println("Query is wrong:" + qe.getMessage());
+		} finally {
+			System.err.println("done");
+			deleteDir(dataDir);
+			System.exit(0);
+		}
 	}
 
 	private static Options setUpCLIParsing() {
@@ -102,10 +108,11 @@ public class CLI {
 		final Option portOption = Option.builder("p").hasArg()
 				.desc("http port").longOpt("port").build();
 
-		// final OptionGroup server = new OptionGroup();
+		final OptionGroup serverOrCli = new OptionGroup();
 		// final OptionGroup cli = new OptionGroup();
-		options.addOption(vcfOption);
-		options.addOption(queryOption);
+		serverOrCli.addOption(vcfOption);
+		serverOrCli.addOption(queryOption);
+		options.addOptionGroup(serverOrCli);
 		options.addOption(portOption);
 		return options;
 	}

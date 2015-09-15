@@ -7,7 +7,7 @@ sparql against simple vcf files without loading them into a triple store.
 git clone https://github.com/JervenBolleman/sparql-vcf
 cd sparql-vcf
 mvn assembly:assembly
-./sparql-vcf.sh src/test/resources/example.vcf "SELECT ?s ?p WHERE {?s <http://biohackathon.org/resource/faldo#position> ?p}"
+java -jar target/sparql-vcf-1.0-SNAPSHOT-jar-with-dependencies.jar -v src/test/resources/example.vcf -q "SELECT ?s ?p WHERE {?s <http://biohackathon.org/resource/faldo#position> ?p}"
 ```
 
 See the issue lists for future tasks..
