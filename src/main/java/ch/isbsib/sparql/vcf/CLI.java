@@ -88,6 +88,10 @@ public class CLI {
 			}
 		} catch (MalformedQueryException qe) {
 			System.err.println("Query is wrong:" + qe.getMessage());
+		} catch (RepositoryException re) {
+			System.err.println("Repository is wrong:" + re.getMessage());
+		} catch (QueryEvaluationException re) {
+			System.err.println("Query evaluation errored:" + re.getMessage());
 		} finally {
 			System.err.println("done");
 			deleteDir(dataDir);
