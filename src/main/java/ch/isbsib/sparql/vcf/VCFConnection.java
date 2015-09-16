@@ -40,12 +40,12 @@ import org.openrdf.sail.UpdateContext;
 //import org.openrdf.sail.UpdateContext;
 
 public class VCFConnection implements SailConnection {
-	private final File file;
+	private final File dir;
 	private final ValueFactory vf;
 
-	public VCFConnection(File file, ValueFactory vf) {
+	public VCFConnection(File dir, ValueFactory vf) {
 		super();
-		this.file = file;
+		this.dir = dir;
 		this.vf = vf;
 	}
 
@@ -64,7 +64,7 @@ public class VCFConnection implements SailConnection {
 			TupleExpr tupleExpr, Dataset dataset, BindingSet bindings,
 			boolean includeInferred) throws SailException {
 		try {
-			VCFTripleSource tripleSource = new VCFTripleSource(file, vf);
+			VCFTripleSource tripleSource = new VCFTripleSource(dir, vf);
 			EvaluationStrategy strategy = new OneLineAwareEvaluationStrategy(
 					tripleSource);
 			tupleExpr = tupleExpr.clone();
@@ -105,7 +105,7 @@ public class VCFConnection implements SailConnection {
 			Resource... contexts) throws SailException {
 
 		final VCFFileFilterReader bedFileFilterReader = new VCFFileFilterReader(
-				file, subj, pred, obj, contexts, vf);
+				dir, subj, pred, obj, contexts, vf);
 		return new CloseableIteratorIteration<Statement, SailException>() {
 
 			@Override
@@ -144,7 +144,7 @@ public class VCFConnection implements SailConnection {
 		for (Resource context : contexts)
 			if (context == null) {
 				try (final VCFFileFilterReader bedFileFilterReader = new VCFFileFilterReader(
-						file, null, null, null, null, vf)) {
+						dir, null, null, null, null, vf)) {
 					long count = 0L;
 					try {
 						while (bedFileFilterReader.hasNext()) {

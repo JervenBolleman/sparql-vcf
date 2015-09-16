@@ -74,7 +74,7 @@ public class CLI {
 		System.err.println("Query is: " + query);
 		try {
 			rep.setDataDir(dataDir);
-			rep.setBedFile(new File(vcf));
+			rep.setDirectoryWithVCFFiles(new File(vcf));
 			rep.setValueFactory(new SimpleValueFactory());
 			SailRepository sr = new SailRepository(rep);
 			rep.initialize();

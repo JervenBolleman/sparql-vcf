@@ -4,7 +4,10 @@ import info.aduna.iteration.CloseableIteration;
 import info.aduna.iteration.EmptyIteration;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.openrdf.model.IRI;
@@ -20,7 +23,7 @@ import org.openrdf.query.algebra.evaluation.TripleSource;
 
 public class VCFTripleSource implements TripleSource {
 
-	private File file;
+	private File dir;
 	private ValueFactory vf;
 
 	private static final Set<IRI> possiblePredicates = new HashSet<>();
@@ -37,8 +40,8 @@ public class VCFTripleSource implements TripleSource {
 		possiblePredicates.add(FALDO.REFERENCE_PREDICATE);
 	}
 
-	public VCFTripleSource(File file, ValueFactory vf) {
-		this.file = file;
+	public VCFTripleSource(File dir, ValueFactory vf) {
+		this.dir = dir;
 		this.vf = vf;
 	}
 
@@ -47,10 +50,24 @@ public class VCFTripleSource implements TripleSource {
 			Resource subj, IRI pred, Value obj, Resource... contexts)
 			throws QueryEvaluationException {
 		if (pred == null || possiblePredicates.contains(pred)) {
-			return new VCFFileFilterReader(file, subj, pred, obj, contexts,
-					getValueFactory());
+			List<CloseableIteration<Statement, QueryEvaluationException>> li = new ArrayList<>();
+			for (File f : findVCFilesInDir()) {
+				li.add(new VCFFileFilterReader(f, subj, pred, obj, contexts,
+						getValueFactory()));
+			}
+			return new ConcatenatingCloseabelIterator<Statement>(li.iterator());
 		} else
 			return new EmptyIteration<Statement, QueryEvaluationException>();
+	}
+
+	private File[] findVCFilesInDir() {
+		return dir.listFiles(new FilenameFilter() {
+
+			@Override
+			public boolean accept(File file, String name) {
+				return name.endsWith(".vcf") || name.endsWith(".vcf.gz");
+			}
+		});
 	}
 
 	@Override
@@ -60,7 +77,7 @@ public class VCFTripleSource implements TripleSource {
 
 	public CloseableIteration<BindingSet, QueryEvaluationException> getStatements(
 			BindingSet bindings, Join join) {
-		return new VCFFileBindingReader(file, bindings, join, getValueFactory());
+		return new VCFFileBindingReader(dir, bindings, join, getValueFactory());
 
 	}
 

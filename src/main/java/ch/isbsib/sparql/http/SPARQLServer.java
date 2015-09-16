@@ -3,7 +3,6 @@ package ch.isbsib.sparql.http;
 import java.io.File;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.openrdf.model.impl.SimpleValueFactory;
 import org.openrdf.repository.sail.SailRepository;
 
@@ -14,11 +13,11 @@ public class SPARQLServer {
 	private final SailRepository sr;
 	private final Server server;
 
-	public SPARQLServer(File dataDir, String vcffile, String port)
+	public SPARQLServer(File dataDir, String vcfdir, String port)
 			throws Exception {
 		VCFFileStore rep = new VCFFileStore();
 		rep.setDataDir(dataDir);
-		rep.setBedFile(new File(vcffile));
+		rep.setDirectoryWithVCFFiles(new File(vcfdir));
 		rep.setValueFactory(new SimpleValueFactory());
 		this.sr = new SailRepository(rep);
 //		rep.initialize();

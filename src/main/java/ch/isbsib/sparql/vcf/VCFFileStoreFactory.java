@@ -42,7 +42,7 @@ public class VCFFileStoreFactory implements SailFactory {
 		if (config instanceof VCFFileConfig) {
 			VCFFileConfig memConfig = (VCFFileConfig)config;
 
-			memoryStore.setBedFile(new File(memConfig.getFile()));
+			memoryStore.setDirectoryWithVCFFiles(new File(memConfig.getFile()));
 		}
 
 		return memoryStore;

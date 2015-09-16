@@ -62,7 +62,7 @@ public class VCFRepositoryTest extends TestCase {
 		assertTrue(newFile.exists());
 		VCFFileStore rep = new VCFFileStore();
 		rep.setDataDir(dataDir);
-		rep.setBedFile(newFile);
+		rep.setDirectoryWithVCFFiles(newFile.getParentFile());
 		rep.setValueFactory(new SimpleValueFactory());
 		SailRepository sr = new SailRepository(rep);
 		rep.initialize();

@@ -8,7 +8,7 @@ import org.openrdf.sail.SailException;
 import org.openrdf.sail.helpers.AbstractSail;
 
 public class VCFFileStore extends AbstractSail {
-	private File file;
+	private File dir;
 	private ValueFactory vf;
 
 	@Override
@@ -28,14 +28,14 @@ public class VCFFileStore extends AbstractSail {
 
 	@Override
 	protected SailConnection getConnectionInternal() throws SailException {
-		return new VCFConnection(file, getValueFactory());
+		return new VCFConnection(dir, getValueFactory());
 	}
 
 	public void setValueFactory(ValueFactory vf) {
 		this.vf = vf;
 	}
 
-	public void setBedFile(File file){
-		this.file =file;
+	public void setDirectoryWithVCFFiles(File dir) {
+		this.dir = dir;
 	}
 }

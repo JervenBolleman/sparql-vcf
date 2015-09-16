@@ -90,8 +90,6 @@ public class VCFToTripleConverter {
 		if (feature.getCalledChrCount() > 0 ) // score
 			add(stats, recordId, VCF.CALLED_CHR_COUNT, feature.getCalledChrCount());
 		
-		// we skip position 6,7 and 8 as these are colouring instructions
-
 		for (Allele exon : feature.getAlleles()) {
 			convertAllele(feature, stats, recordPath, recordId, exon);
 		}
