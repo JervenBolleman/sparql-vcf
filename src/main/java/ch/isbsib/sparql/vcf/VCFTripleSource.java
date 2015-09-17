@@ -5,6 +5,7 @@ import info.aduna.iteration.EmptyIteration;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -52,8 +53,12 @@ public class VCFTripleSource implements TripleSource {
 		if (pred == null || possiblePredicates.contains(pred)) {
 			List<CloseableIteration<Statement, QueryEvaluationException>> li = new ArrayList<>();
 			for (File f : findVCFilesInDir()) {
-				li.add(new VCFFileFilterReader(f, subj, pred, obj, contexts,
-						getValueFactory()));
+				try {
+					li.add(new VCFFileFilterReader(f, subj, pred, obj,
+							contexts, getValueFactory()));
+				} catch (IOException e) {
+					throw new QueryEvaluationException(e);
+				}
 			}
 			return new ConcatenatingCloseabelIterator<Statement>(li.iterator());
 		} else

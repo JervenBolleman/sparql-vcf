@@ -38,9 +38,11 @@ public class VCFFileBindingReader implements
 
 	public VCFFileBindingReader(File file, BindingSet bindings, Join join,
 			ValueFactory valueFactory) {
+		
 		StatementPattern left = (StatementPattern) join.getLeftArg();
 		StatementPattern right = (StatementPattern) join.getRightArg();
 		queue = new ArrayBlockingQueue<BindingSet>(1000);
+		System.err.println("reading file:" +file.getAbsolutePath());
 		runner = new BindingReaderRunner(file, queue, left, right,
 				valueFactory, bindings);
 		exec.submit(runner);

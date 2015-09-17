@@ -3,60 +3,71 @@ package ch.isbsib.sparql.vcf;
 import info.aduna.iteration.CloseableIteration;
 
 import java.io.File;
-import java.util.NoSuchElementException;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
+import org.broad.tribble.AbstractFeatureReader;
+import org.broad.tribble.readers.LineIterator;
+import org.broadinstitute.variant.variantcontext.VariantContext;
+import org.broadinstitute.variant.vcf.VCFCodec;
+import org.openrdf.model.IRI;
 import org.openrdf.model.Resource;
 import org.openrdf.model.Statement;
-import org.openrdf.model.IRI;
 import org.openrdf.model.Value;
 import org.openrdf.model.ValueFactory;
 import org.openrdf.query.QueryEvaluationException;
 
 public class VCFFileFilterReader implements
 		CloseableIteration<Statement, QueryEvaluationException> {
-	private final BlockingQueue<Statement> statements;
-	private final FilterReaderRunner runner;
-	private Statement next;
-	private boolean closed = false;
-	private final static ExecutorService exec = Executors
-			.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
-	public VCFFileFilterReader(File bedFile, Resource subj, IRI pred,
-			Value obj, Resource[] contexts, ValueFactory valueFactory) {
-		statements = new ArrayBlockingQueue<Statement>(10000);
-		runner = new FilterReaderRunner(bedFile, subj, pred, obj, statements,
-				valueFactory);
-		exec.submit(runner);
+	private final AbstractFeatureReader<VariantContext, LineIterator> reader;
+	private Iterator<Statement> currentFeature;
+	private final Iterator<VariantContext> variantIter;
+	private int lineNo = 0;
+	private final String fileName;
+
+	private final VCFToTripleConverter conv;
+	private final Resource subj;
+	private final IRI pred;
+	private final Value obj;
+
+	public VCFFileFilterReader(File file, Resource subj, IRI pred, Value obj,
+			Resource[] contexts, ValueFactory valueFactory) throws IOException {
+		this.subj = subj;
+		this.pred = pred;
+		this.obj = obj;
+		this.reader = AbstractFeatureReader.getFeatureReader(
+				file.getAbsolutePath(), new VCFCodec(), false);
+		this.fileName = "file://" + file.getAbsolutePath();
+		conv = new VCFToTripleConverter(valueFactory, pred);
+
+		System.err.println("reading file:" + fileName);
+
+		variantIter = reader.iterator();
 	}
 
 	@Override
 	public boolean hasNext() throws QueryEvaluationException {
-		next = null;
-		while (!runner.done || !statements.isEmpty()) {
-			try {
-				next = statements.poll(1, TimeUnit.SECONDS);
-				if (next != null) {
-					return true;
-				}
-			} catch (InterruptedException e) {
-				Thread.interrupted();
-			}
-		}
-		return false;
+		if (currentFeature != null && currentFeature.hasNext())
+			return true;
+
+		if (!variantIter.hasNext())
+			return false;
+		// String filePath = file.getName();
+
+		currentFeature = filter(
+				conv.convertLineToTriples(fileName, variantIter.next(),
+						lineNo++)).iterator();
+		return currentFeature.hasNext();
+
 	}
 
 	@Override
 	public Statement next() throws QueryEvaluationException {
-		if (next == null)
-			throw new NoSuchElementException("No more elements");
-		if (closed)
-			throw new IllegalStateException("Iterator has been closed");
-		return next;
+		return currentFeature.next();
+
 	}
 
 	@Override
@@ -67,7 +78,28 @@ public class VCFFileFilterReader implements
 
 	@Override
 	public void close() throws QueryEvaluationException {
-		runner.done = true;
-		closed = true;
+		try {
+			this.reader.close();
+		} catch (IOException e) {
+			throw new QueryEvaluationException(e);
+		}
+	}
+
+	private List<Statement> filter(List<Statement> statements) {
+		List<Statement> filtered = new ArrayList<Statement>();
+		for (Statement toFilter : statements) {
+			Resource subject = toFilter.getSubject();
+			Resource predicate = toFilter.getPredicate();
+			Value object = toFilter.getObject();
+			if (matches(subject, subj) && matches(predicate, pred)
+					&& matches(object, obj)) {
+				filtered.add(toFilter);
+			}
+		}
+		return filtered;
+	}
+
+	protected boolean matches(Value subject, Value subj) {
+		return subject.equals(subj) || subj == null;
 	}
 }

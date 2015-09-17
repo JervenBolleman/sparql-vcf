@@ -21,14 +21,16 @@ public class ConcatenatingCloseabelIterator<T extends Statement> implements
 
 	@Override
 	public boolean hasNext() throws QueryEvaluationException {
-		if (current == null) {
-			if (iter.hasNext()) {
+		if (current != null && current.hasNext()) {
+			return true;
+		} else {
+			while (iter.hasNext()) {
 				current = iter.next();
-				return current.hasNext();
-			} else
-				return false;
-		} else
-			return current.hasNext();
+				if (current.hasNext())
+					return true;
+			}
+			return false;
+		}
 	}
 
 	@Override

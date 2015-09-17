@@ -5,6 +5,7 @@ import info.aduna.iteration.CloseableIteratorIteration;
 import info.aduna.iteration.EmptyIteration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
@@ -104,8 +105,13 @@ public class VCFConnection implements SailConnection {
 			Resource subj, IRI pred, Value obj, boolean includeInferred,
 			Resource... contexts) throws SailException {
 
-		final VCFFileFilterReader bedFileFilterReader = new VCFFileFilterReader(
-				dir, subj, pred, obj, contexts, vf);
+		VCFFileFilterReader bedFileFilterReader;
+		try {
+			bedFileFilterReader = new VCFFileFilterReader(dir, subj, pred, obj,
+					contexts, vf);
+		} catch (IOException e1) {
+			throw new SailException(e1);
+		}
 		return new CloseableIteratorIteration<Statement, SailException>() {
 
 			@Override
@@ -155,6 +161,8 @@ public class VCFConnection implements SailConnection {
 						throw new SailException(e);
 					}
 					return count;
+				} catch (QueryEvaluationException | IOException e1) {
+					throw new SailException(e1);
 				}
 			}
 		return 0;
