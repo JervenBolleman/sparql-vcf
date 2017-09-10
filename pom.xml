@@ -45,7 +45,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>ch.isbsib.sparql.bed.CLI</mainClass>
+							<mainClass>ch.isbsib.sparql.vcf.CLI</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib</classpathPrefix>
 						</manifest>
@@ -70,23 +70,23 @@
 				<groupId>org.mortbay.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<configuration>
-					<war>${project.build.directory}/openrdf-sesame-webapp.war</war>
+					<war>${project.build.directory}/rdf4j-webapp.war</war>
 					<webAppConfig>
 						<jettyEnvXml>${project.build.directory}/classes/jetty-env.xml</jettyEnvXml>
 					</webAppConfig>
 					<systemProperties>
 						<systemProperty>
-							<name>info.aduna.platform.appdata.basedir</name>
+							<name>rdf4j.platform.appdata.basedir</name>
 							<value>${project.build.directory}/</value>
 						</systemProperty>
 					</systemProperties>
 					<contextHandlers>
 						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-							<war>${project.build.directory}/openrdf-sesame-webapp.war</war>
+							<war>${project.build.directory}/rdf4j-sesame-webapp.war</war>
 							<contextPath>/openrdf-workbench</contextPath>
 						</contextHandler>
 						<contextHandler implementation="org.eclipse.jetty.webapp.WebAppContext">
-							<war>${project.build.directory}/openrdf-sesame-server.war</war>
+							<war>${project.build.directory}/rdf4j-sesame-server.war</war>
 							<contextPath>/openrdf-sesame</contextPath>
 						</contextHandler>
 					</contextHandlers>
@@ -94,7 +94,7 @@
 			</plugin>
 			<plugin>
       <artifactId>maven-war-plugin</artifactId>
-      <version>2.1</version>
+      <version>3.1.0</version>
       <configuration>
         <attachClasses>true</attachClasses>
       </configuration>
