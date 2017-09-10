@@ -99,8 +99,44 @@
         <attachClasses>true</attachClasses>
       </configuration>
     </plugin>
-    </plugins>
-    </build>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>org.eclipse.rdf4j</groupId>
+									<artifactId>rdf4j-http-workbench</artifactId>
+									<version>${sesame.version}</version>
+									<type>war</type>
+									<overWrite>true</overWrite>
+									<destFileName>rdf4j-webapp.war</destFileName>
+								</artifactItem>
+								<artifactItem>
+									<groupId>org.eclipse.rdf4j</groupId>
+									<artifactId>rdf4j-http-server</artifactId>
+									<version>${sesame.version}</version>
+									<type>war</type>
+									<overWrite>true</overWrite>
+									<destFileName>rdf4j-sesame-server.war</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>
+								${project.build.directory}
+							</outputDirectory>
+							<overWriteReleases>true</overWriteReleases>
+							<overWriteSnapshots>true</overWriteSnapshots>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+
+	</build>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
