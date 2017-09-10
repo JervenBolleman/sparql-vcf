@@ -3,8 +3,9 @@ package ch.isbsib.sparql.http;
 import java.io.File;
 
 import org.eclipse.jetty.server.Server;
-import org.openrdf.model.impl.SimpleValueFactory;
-import org.openrdf.repository.sail.SailRepository;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
 
 //import com.sun.net.httpserver.HttpServer;
 import ch.isbsib.sparql.vcf.VCFFileStore;
@@ -18,7 +19,7 @@ public class SPARQLServer {
 		VCFFileStore rep = new VCFFileStore();
 		rep.setDataDir(dataDir);
 		rep.setDirectoryWithVCFFiles(new File(vcfdir));
-		rep.setValueFactory(new SimpleValueFactory());
+		rep.setValueFactory(SimpleValueFactory.getInstance());
 		this.sr = new SailRepository(rep);
 //		rep.initialize();
 		this.sr.initialize();

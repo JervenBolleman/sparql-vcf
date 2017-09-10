@@ -1,13 +1,13 @@
 package ch.isbsib.sparql.vcf;
 
-import org.openrdf.model.IRI;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.SimpleNamespace;
-import org.openrdf.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleNamespace;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 public class VCF {
-	public static final String PREFIX = "faldo";
+	public static final String PREFIX = "vcf";
 	public static final String NAMESPACE = "http://biohackathon.org/resource/vcf#";
 	public static final Namespace NS = new SimpleNamespace(PREFIX, NAMESPACE);
 	
@@ -18,8 +18,7 @@ public class VCF {
 	public static final IRI CALLED_CHR_COUNT;
 	
 	static {
-		final ValueFactory f = new SimpleValueFactory();
-
+		final ValueFactory f = SimpleValueFactory.getInstance();
 		// Properties common to Faldo
 		CHROMOSOME = f.createIRI(NAMESPACE, "Chromosome");
 		CALLED_CHR_COUNT = f.createIRI(NAMESPACE, "CalledChromosomeCount");

@@ -1,10 +1,10 @@
 package ch.isbsib.sparql.vcf;
 
-import org.openrdf.model.IRI;
-import org.openrdf.model.Namespace;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.model.impl.SimpleNamespace;
-import org.openrdf.model.impl.SimpleValueFactory;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Namespace;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.model.impl.SimpleNamespace;
+import org.eclipse.rdf4j.model.impl.SimpleValueFactory;
 
 public class FALDO {
 	public static final String PREFIX = "faldo";
@@ -14,14 +14,14 @@ public class FALDO {
 
 	public static final IRI BOTH_STRANDS_POSITION_CLASS;
 	public static final IRI EXACT_POSITION_CLASS;
-	
+
 	public static final IRI FUZZY_POSITION_CLASS;
 	public static final IRI IN_BETWEEN_POSITION_CLASS;
 	public static final IRI IN_RANGE_POSITION_CLASS;
 	public static final IRI ONE_OF_POSITION_CLASS;
 	public static final IRI POSITION_CLASS;
 	public static final IRI REGION_CLASS;
-	
+
 	public static final IRI FORWARD_STRAND_POSITION_CLASS;
 	public static final IRI REVERSE_STRANDED_POSITION_CLASS;
 	public static final IRI STRANDED_POSITION_CLASS;
@@ -34,7 +34,7 @@ public class FALDO {
 	public static final IRI REFERENCE_PREDICATE;
 
 	static {
-		final ValueFactory f = new SimpleValueFactory();
+		final ValueFactory f = SimpleValueFactory.getInstance();
 
 		// Properties common to Faldo
 		BOTH_STRANDS_POSITION_CLASS = f.createIRI(NAMESPACE, "BothStrandsPosition");

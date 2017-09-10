@@ -1,7 +1,5 @@
 package ch.isbsib.sparql.vcf;
 
-import info.aduna.iteration.CloseableIteration;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,12 +10,13 @@ import org.broad.tribble.AbstractFeatureReader;
 import org.broad.tribble.readers.LineIterator;
 import org.broadinstitute.variant.variantcontext.VariantContext;
 import org.broadinstitute.variant.vcf.VCFCodec;
-import org.openrdf.model.IRI;
-import org.openrdf.model.Resource;
-import org.openrdf.model.Statement;
-import org.openrdf.model.Value;
-import org.openrdf.model.ValueFactory;
-import org.openrdf.query.QueryEvaluationException;
+import org.eclipse.rdf4j.common.iteration.CloseableIteration;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.Resource;
+import org.eclipse.rdf4j.model.Statement;
+import org.eclipse.rdf4j.model.Value;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.query.QueryEvaluationException;
 
 public class VCFFileFilterReader implements
 		CloseableIteration<Statement, QueryEvaluationException> {

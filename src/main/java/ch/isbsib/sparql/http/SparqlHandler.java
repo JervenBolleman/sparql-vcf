@@ -1,37 +1,32 @@
 package ch.isbsib.sparql.http;
 
-import java.awt.image.renderable.RenderableImageOp;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.xml.crypto.dsig.keyinfo.PGPData;
 
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.openrdf.query.BooleanQuery;
-import org.openrdf.query.GraphQuery;
-import org.openrdf.query.Query;
-import org.openrdf.query.QueryLanguage;
-import org.openrdf.query.TupleQuery;
-import org.openrdf.query.resultio.BooleanQueryResultFormat;
-import org.openrdf.query.resultio.BooleanQueryResultWriter;
-import org.openrdf.query.resultio.BooleanQueryResultWriterRegistry;
-import org.openrdf.query.resultio.QueryResultIO;
-import org.openrdf.query.resultio.TupleQueryResultFormat;
-import org.openrdf.query.resultio.TupleQueryResultWriter;
-import org.openrdf.query.resultio.TupleQueryResultWriterFactory;
-import org.openrdf.query.resultio.TupleQueryResultWriterRegistry;
-import org.openrdf.repository.sail.SailRepository;
-import org.openrdf.repository.sail.SailRepositoryConnection;
-import org.openrdf.rio.RDFFormat;
-import org.openrdf.rio.RDFWriter;
-import org.openrdf.rio.Rio;
-import org.openrdf.rio.helpers.RDFHandlerBase;
+import org.eclipse.rdf4j.query.BooleanQuery;
+import org.eclipse.rdf4j.query.GraphQuery;
+import org.eclipse.rdf4j.query.Query;
+import org.eclipse.rdf4j.query.QueryLanguage;
+import org.eclipse.rdf4j.query.TupleQuery;
+import org.eclipse.rdf4j.query.resultio.BooleanQueryResultFormat;
+import org.eclipse.rdf4j.query.resultio.BooleanQueryResultWriterRegistry;
+import org.eclipse.rdf4j.query.resultio.QueryResultFormat;
+import org.eclipse.rdf4j.query.resultio.QueryResultIO;
+import org.eclipse.rdf4j.query.resultio.QueryResultWriter;
+import org.eclipse.rdf4j.query.resultio.TupleQueryResultFormat;
+import org.eclipse.rdf4j.query.resultio.TupleQueryResultWriter;
+import org.eclipse.rdf4j.query.resultio.TupleQueryResultWriterRegistry;
+import org.eclipse.rdf4j.repository.sail.SailRepository;
+import org.eclipse.rdf4j.repository.sail.SailRepositoryConnection;
+import org.eclipse.rdf4j.rio.RDFFormat;
+import org.eclipse.rdf4j.rio.RDFWriter;
+import org.eclipse.rdf4j.rio.Rio;
 
 public class SparqlHandler extends AbstractHandler {
 
@@ -74,14 +69,14 @@ public class SparqlHandler extends AbstractHandler {
 
 				final TupleQueryResultWriterRegistry r = TupleQueryResultWriterRegistry
 						.getInstance();
-				final TupleQueryResultFormat ff = r.getFileFormatForMIMEType(
-						mt, TupleQueryResultFormat.TSV);
-				final TupleQueryResultWriter writer = QueryResultIO
+				final QueryResultFormat ff = r.getFileFormatForMIMEType(
+						mt).orElse(TupleQueryResultFormat.TSV);
+				final TupleQueryResultWriter writer = (TupleQueryResultWriter) QueryResultIO
 						.createWriter(ff, response.getOutputStream());
 				((TupleQuery) pqpQ).evaluate(writer);
 			} else if (pqpQ instanceof GraphQuery) {
 
-				final RDFFormat wmt = Rio.getWriterFormatForMIMEType(mt);
+				final RDFFormat wmt = Rio.getWriterFormatForMIMEType(mt).orElse(RDFFormat.RDFXML);
 				final RDFWriter writer = Rio.createWriter(wmt,
 						response.getOutputStream());
 				((GraphQuery) pqpQ).evaluate(writer);
@@ -89,9 +84,9 @@ public class SparqlHandler extends AbstractHandler {
 
 				final BooleanQueryResultWriterRegistry r = BooleanQueryResultWriterRegistry
 						.getInstance();
-				final BooleanQueryResultFormat ff = r.getFileFormatForMIMEType(
-						mt, BooleanQueryResultFormat.TEXT);
-				final BooleanQueryResultWriter writer = QueryResultIO
+				final QueryResultFormat ff = r.getFileFormatForMIMEType(
+						mt).orElse(BooleanQueryResultFormat.TEXT);
+				final QueryResultWriter writer = QueryResultIO
 						.createWriter(ff, response.getOutputStream());
 				writer.handleBoolean(((BooleanQuery) pqpQ).evaluate());
 			}

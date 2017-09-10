@@ -2,10 +2,10 @@ package ch.isbsib.sparql.vcf;
 
 import java.io.File;
 
-import org.openrdf.model.ValueFactory;
-import org.openrdf.sail.SailConnection;
-import org.openrdf.sail.SailException;
-import org.openrdf.sail.helpers.AbstractSail;
+import org.eclipse.rdf4j.model.ValueFactory;
+import org.eclipse.rdf4j.sail.SailConnection;
+import org.eclipse.rdf4j.sail.SailException;
+import org.eclipse.rdf4j.sail.helpers.AbstractSail;
 
 public class VCFFileStore extends AbstractSail {
 	private File dir;
