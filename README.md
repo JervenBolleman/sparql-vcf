@@ -1,6 +1,12 @@
 sparql-vcf
 ==========
 
+This functionality is better implemented in [jvarkit](http://lindenb.github.io/jvarkit/VcfSparql.html). 
+
+This project might be revived in the future, but remains a demonstration of what is possible and it's performance
+is not what we would expect for production code.
+
+
 sparql against simple vcf files without loading them into a triple store.
 
 ```
